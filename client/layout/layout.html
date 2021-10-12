@@ -1,16 +1,33 @@
 <template name="templateAppLayout">
-    <head>
-        <title>Pokker</title>
-    </head>
-    <body>
-        <div class="container">
-            {{> yield}}
-        </div>
-    </body>
+    <div class="container pokker-app">
+        {{#if currentUser}}
+            {{> templateAppHeader}}
+        {{/if}}
+        {{> yield}}
+        {{> templateAppFooter}}
+    </div>
 </template>
 
 <template name="templateAppLoading">
     <div class="container">
         Loading
+    </div>
+</template>
+
+<template name="templateAppHeader">
+    <div class="app-header">
+        Header
+    </div>
+</template>
+
+<template name="templateAppFooter">
+    <div class="app-footer">
+        Footer
+    </div>
+</template>
+
+<template name="templateAppNotFound">
+    <div class="app-notfound">
+        Not Found
     </div>
 </template>

@@ -4,7 +4,7 @@ declare module Template {
     const templateMainApp: Blaze.Template;
 }
 
-module App {
+module MainApp {
     Template.templateMainApp.onCreated(function(this: Blaze.TemplateInstance): void {
     });
 

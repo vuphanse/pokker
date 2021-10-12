@@ -18,5 +18,8 @@ typescript              # Enable TypeScript syntax in .ts and .tsx modules
 shell-server@0.5.0            # Server-side component of the `meteor shell` command
 blaze-html-templates
 iron:router
-huttonr:bootstrap3
 less
+accounts-ui
+twbs:bootstrap
+accounts-password
+random

@@ -1,0 +1,12 @@
+<template name="templateAppLogin">
+    <div class="app-login">
+        {{> templateUIInput emailInputOptions}}
+        {{> templateUIInput passwordInputOptions}}
+        {{> templateUIButton loginBtnOptions}}
+        {{#with errorMessage}}
+            <p class="error-message bg-danger">
+                {{this}}
+            </p>
+        {{/with}}
+    </div>
+</template>

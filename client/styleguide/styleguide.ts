@@ -5,7 +5,7 @@ declare module Template {
     const templateAppStyleGuide: Blaze.Template;
 }
 
-module App {
+module MainApp {
     Template.templateAppStyleGuide.helpers({
         inputOptions: function(): AppUI.UIInputOptions {
             return {
