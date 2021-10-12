@@ -1,9 +1,26 @@
-/// <reference path="../definitions/index.d.ts"/>
+import "./imports";
 
-import { Templates } from "./templates";
+declare module Template {
+    const templateMainApp: Blaze.Template;
+}
 
-module PApp {
-    Template[Templates.mainApp].helpers({
+module App {
+    Template.templateMainApp.onCreated(function(this: Blaze.TemplateInstance): void {
+    });
+
+    Template.templateMainApp.onRendered(function(this: Blaze.TemplateInstance): void {
+    });
+
+    Template.templateMainApp.onDestroyed(function(this: Blaze.TemplateInstance): void {
+    });
+
+    Template.templateMainApp.helpers({
+        title: function(): string {
+            return "Welcome to the game";
+        },
+    });
+
+    Template.templateMainApp.events({
 
     });
 }

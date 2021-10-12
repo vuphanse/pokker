@@ -1,9 +1,13 @@
-/// <reference path="../../definitions/index.d.ts"/>
+import "./../imports";
 
-import { Templates } from "./../templates";
+declare module Template {
+    const templateAppLayout: Blaze.Template;
+}
 
-Template[Templates.layout].helpers({
-    thisArray: function(): any[] {
-        return [this];
-    },
-});
+module App {
+    Template.templateAppLayout.helpers({
+        thisArray: function(): any[] {
+            return [this];
+        },
+    });
+}
