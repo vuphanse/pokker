@@ -12,3 +12,11 @@ Router.route("/", {
         self.render("templateMainApp");
     },
 });
+
+Router.route("/styleguide", {
+    name: "styleguide",
+    action: function(this: Iron.RouteController): void {
+        let self = this;
+        self.render("templateAppStyleGuide");
+    },
+});
