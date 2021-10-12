@@ -1,0 +1,5 @@
+# pokker
+
+```
+  ./startdebug.sh
+```
