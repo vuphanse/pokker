@@ -1,0 +1,8 @@
+<template name="templateUIInput">
+    <div class="ui-input">
+        {{#with label}}
+            <span class="input-label">{{this}}</span>
+        {{/with}}
+        <input class="{{modClasses}} form-control js-input" type="{{type}}" value="{{value}}" {{inputAttr}}/>
+    </div>
+</template>
