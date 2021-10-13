@@ -14,3 +14,10 @@ Router.route("/signin", {
         this.render("templateAppLogin");
     },
 });
+
+Router.route("/signup", {
+    name: "signup",
+    action: function(): void {
+        this.render("templateAppSignUp");
+    },
+});

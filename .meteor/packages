@@ -23,3 +23,5 @@ accounts-ui
 twbs:bootstrap
 accounts-password
 random
+check
+accounts-base

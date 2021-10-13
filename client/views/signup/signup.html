@@ -1,0 +1,17 @@
+<template name="templateAppSignUp">
+    <div class="app-signup">
+        {{> templateUIInput emailInputOptions}}
+        {{> templateUIInput passwordInputOptions}}
+        {{> templateUIInput repasswordInputOptions}}
+        {{> templateUIButton signupBtnOptions}}
+
+        {{#with errorMessage}}
+            <p class="error-message bg-danger">{{this}}</p>
+        {{/with}}
+        {{#with message}}
+            <p class="bg-success message">{{this}}</p>
+        {{/with}}
+
+        <a href="/signin">Have an account already?</a>
+    </div>
+</template>

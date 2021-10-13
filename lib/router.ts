@@ -14,7 +14,7 @@ Router.onBeforeAction(function(): void {
     if (userId)
         return this.next();
 
-    AuthRouter.login();
+    AuthRouter.login(this.route.path() == "/signup");
     this.next();
 });
 
