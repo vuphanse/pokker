@@ -10,18 +10,18 @@ module MainApp {
         });
 
         if (!user.emails || user.emails.length != 1 || !user.emails[0].address)
-            throw new Meteor.Error(403, "Invalid email 1");
+            throw new Meteor.Error(403, "Invalid email");
 
         let email = user.emails[0].address;
         if (!validateEmail(email))
-            throw new Meteor.Error(403, "Invalid email 2");
+            throw new Meteor.Error(403, "Invalid email");
 
         let exists = !!Meteor.users.findOne({
             mainEmail: email,
         });
 
         if (exists)
-            throw new Meteor.Error("Invalid email 3");
+            throw new Meteor.Error("Invalid email");
 
         user.username = email.split("@")[0];
         user["mainEmail"] = email;

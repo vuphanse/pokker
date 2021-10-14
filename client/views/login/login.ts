@@ -10,7 +10,7 @@ module MainApp {
 
     Template.templateAppLogin.onCreated(function(this: TemplateAppLoginInstance): void {
         if (Meteor.userId())
-            Router.go("home");
+            return Router.go("home");
 
         this.email = new ReactiveVar("");
         this.password = new ReactiveVar("");

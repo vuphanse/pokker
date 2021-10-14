@@ -16,6 +16,8 @@ Router.onBeforeAction(function(): void {
 
     AuthRouter.login(this.route.path() == "/signup");
     this.next();
+}, {
+    except: ["table", "styleguide"],
 });
 
 Router.route("/", {
@@ -23,6 +25,15 @@ Router.route("/", {
     action: function(this: Iron.RouteController): void {
         let self = this;
         self.render("templateMainApp");
+    },
+});
+
+Router.route("/table/:tableId", {
+    name: "table",
+    action: function(this: Iron.RouteController): void {
+        let self = this;
+        console.log({params: this.params});
+        self.render("templateTable");
     },
 });
 

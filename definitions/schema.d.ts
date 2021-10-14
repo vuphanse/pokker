@@ -1,17 +1,17 @@
 declare module DB {
     export enum ETableStatus {
-        Active,
-        Closed,
+        Active = 0,
+        Closed = 1,
     }
 
     export interface Table {
-        _id: string;
+        _id?: string;
         name: string;
         createdAt: Date;
         hostId: string;
         settings: TableSettings;
         players: Player[];
-        status: ETableStatus;
+        status: number;
     }
     
     export interface TableSettings {
