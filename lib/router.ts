@@ -32,7 +32,6 @@ Router.route("/table/:tableId", {
     name: "table",
     action: function(this: Iron.RouteController): void {
         let self = this;
-        console.log({params: this.params});
         self.render("templateTable");
     },
 });

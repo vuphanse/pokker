@@ -1,8 +1,9 @@
 <template name="templateMainApp">
     <div class="main-app">
-        <h1>Welcome to Pokker</h1>
-
-        {{> templateCreateNewTable}}
+        <div class="create-table">
+            <h2>Start by creating new table?</h2>
+            {{> templateCreateNewTable}}
+        </div>
         {{> templateTablesList}}
     </div>
     {{> templatePopupManager}}
