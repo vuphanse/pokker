@@ -1,8 +1,6 @@
 <template name="templateAppLayout">
     <div class="container pokker-app">
-        {{#if currentUser}}
-            {{> templateAppHeader}}
-        {{/if}}
+        {{> templateAppHeader}}
         {{> yield}}
         {{> templateAppFooter}}
     </div>
@@ -11,12 +9,6 @@
 <template name="templateAppLoading">
     <div class="container">
         Loading
-    </div>
-</template>
-
-<template name="templateAppHeader">
-    <div class="app-header">
-        Header
     </div>
 </template>
 
