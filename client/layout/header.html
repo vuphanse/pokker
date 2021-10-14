@@ -1,13 +1,15 @@
 <template name="templateAppHeader">
     <div class="app-header flex-row">
-        <div class="app-header-item js-home">Home</div>
+        <div class="app-header-item js-home">
+            <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+        </div>
         <div class='flex-row'>
             {{#with currentUser}}
                 <div class="app-header-item">{{this.username}}</div>
-                <div class="app-header-item js-log-out">Log Out</div>
+                <div class="app-header-item js-log-out">Logout</div>
             {{else}}
-                <div class="app-header-item js-sign-in">Sign In</div>
-                <div class="app-header-item js-sign-up">Sign Up</div>
+                <div class="app-header-item js-sign-in">Login</div>
+                <div class="app-header-item js-sign-up">Sign up</div>
             {{/with}}
         </div>
     </div>

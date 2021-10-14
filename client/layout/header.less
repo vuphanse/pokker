@@ -1,22 +1,27 @@
 .flex-row {
+    align-items: center;
     display: flex;
     flex-direction: row;
-    height: 5vh;
+    height: 3.6vh;
     justify-content: space-between;
 }
 
 .app-header {
-    background: #9B74D6;
-    padding: 0 5rem ;
+    background: lighten(black, 25%);
+    padding: 16px;
+    border-radius: 4px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 
     .app-header-item {
+        border-radius: 4px;
         cursor: pointer;
         color: whitesmoke;
+        font-weight: 600;
         padding: 0.6rem 2rem;
         text-align: center;
 
         &:hover {
-            background: #7952B3;
+            background: lighten(black, 40%);
             color: white;
             text-decoration: none;
         }

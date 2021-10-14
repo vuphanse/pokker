@@ -39,7 +39,7 @@ module MainApp.Table {
             return {
                 text: "Create",
                 onClick: () => createTable(tpl),
-                style: ENum.EButtonStyle.Small | ENum.EButtonStyle.Success,
+                style: ENum.EButtonStyle.Small | ENum.EButtonStyle.Dark,
             };
         },
     });
