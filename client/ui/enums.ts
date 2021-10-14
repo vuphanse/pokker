@@ -14,5 +14,6 @@ export module ENum {
         Small   = 1 << 8,
         Medium  = 1 << 9,
         Large   = 1 << 10,
+        Dark    = 1 << 11,
     }
 }

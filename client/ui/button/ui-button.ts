@@ -12,6 +12,7 @@ module AppUI {
         Small   = 1 << 8,
         Medium  = 1 << 9,
         Large   = 1 << 10,
+        Dark  =   1 << 11,
     }
 
     export interface UIButtonOptions {
@@ -48,6 +49,8 @@ module AppUI {
             classes.push("btn-warning");
         else if (options.style & EButtonStyle.Danger)
             classes.push("btn-danger");
+        else if (options.style & EButtonStyle.Dark)
+            classes.push("btn-dark");
     
         if (options.style & EButtonStyle.Link)
             classes.push("btn-link");
