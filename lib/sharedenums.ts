@@ -2,7 +2,8 @@
 
 export module ENUMS {
     export enum ETableStatus {
-        Active = 0,
-        Closed = 1,
+        Pending = 0,
+        Playing = 1,
+        Closed  = 2,
     }
 }

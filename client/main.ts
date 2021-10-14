@@ -1,4 +1,5 @@
 import "./imports";
+import { UIPopup } from "./popup";
 
 declare module Template {
     const templateMainApp: Blaze.Template;
@@ -9,6 +10,7 @@ module MainApp {
     });
 
     Template.templateMainApp.onRendered(function(this: Blaze.TemplateInstance): void {
+        
     });
 
     Template.templateMainApp.onDestroyed(function(this: Blaze.TemplateInstance): void {

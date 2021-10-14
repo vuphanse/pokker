@@ -6,7 +6,7 @@ module MainApp {
         check(limit, Number);
 
         return DBCollection.Tables.find({
-            status: ENUMS.ETableStatus.Active,
+            status: { $in: [ENUMS.ETableStatus.Pending, ENUMS.ETableStatus.Playing]},
         }, {
             limit,
             sort: {

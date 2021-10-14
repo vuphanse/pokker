@@ -20,7 +20,6 @@ blaze-html-templates
 iron:router
 less
 accounts-ui
-twbs:bootstrap
 accounts-password
 random
 check

@@ -27,7 +27,7 @@ module MainApp {
                     ante: ANTE,
                     numSeats: numSeats,
                 },
-                status: ENUMS.ETableStatus.Active,
+                status: ENUMS.ETableStatus.Pending,
             };
 
             let tableId = DBCollection.Tables.insert(table);

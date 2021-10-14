@@ -1,4 +1,3 @@
-import "../imports";
 import { ENum } from "../ui/enums";
 
 declare module Template {
