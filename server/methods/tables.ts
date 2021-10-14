@@ -20,7 +20,7 @@ module MainApp {
                 name,
                 createdAt: new Date(),
                 hostId: this.userId,
-                players: [],
+                currentPlayers: [],
                 settings: {
                     smallBlind: SB,
                     bigBlind: BB,
@@ -33,5 +33,77 @@ module MainApp {
             let tableId = DBCollection.Tables.insert(table);
             return tableId;
         },
+        
+        startNewHand: function(tableId: string, index?: number): string {
+            check(tableId, String);
+            check(index, Match.Optional(Number));
+            checkUserAccess();
+
+            let table = checkAndGetTable(tableId);
+            if (table.currentPlayers.length < 2)
+                throw new Meteor.Error(403, "Not enough players to start a hand, minimum is 2");
+
+            if (isTableInPlayingHand(tableId))
+                throw new Meteor.Error(403, "Cannot start new hand if last one is not finished");
+            
+            if (index === undefined)
+                index = DBCollection.TableHands.find({ tableId }).count() + 1;
+
+            return DBCollection.TableHands.insert({
+                index,
+                tableId,
+                players: table.currentPlayers,
+                rounds: [],
+                isFinished: false,
+            });
+        },
+
+        addPlayerToTable: function(tableId: string, seatIndex: number, name: string, stack: number): void {
+            check(tableId, String);
+            check(seatIndex, Number);
+            check(name, String);
+            check(stack, Number);
+
+            let table = checkAndGetTable(tableId);
+            if (isTableInPlayingHand(tableId))
+                throw new Meteor.Error(403, "Cannot start new hand if last one is not finished");
+
+            if (!table.currentPlayers)
+                table.currentPlayers = [];
+
+            if (table.currentPlayers.find(player => player.seatIndex == seatIndex))
+                throw new Meteor.Error(403, "Occupied seat");
+
+            table.currentPlayers.push({
+                seatIndex,
+                name,
+                stack,
+            });
+
+            DBCollection.Tables.update({
+                _id: tableId,
+            }, {
+                $set: {
+                    currentPlayers: table.currentPlayers.sort((a, b) => a.seatIndex - b.seatIndex),
+                },
+            });
+        },
     });
+
+    function isTableInPlayingHand(tableId: string): boolean {
+        return !!DBCollection.TableHands.findOne({
+            tableId,
+            isFinished: false,
+        }, {
+            sort: { index: - 1 },
+        });
+    }
+
+    function checkAndGetTable(tableId: string): DB.Table {
+        let table = DBCollection.Tables.findOne(tableId);
+        if (!table)
+            throw new Meteor.Error(403, "Invalid table");
+
+        return table;
+    }
 }

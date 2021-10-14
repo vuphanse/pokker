@@ -14,4 +14,23 @@ module MainApp {
             },
         });
     });
+
+    Meteor.publish("subscribeTable", function(tableId: string): any {
+        check(tableId, String);
+
+        return DBCollection.Tables.find({
+            _id: tableId,
+            status: { $in: [ENUMS.ETableStatus.Pending, ENUMS.ETableStatus.Playing] },
+        });
+    });
+
+    Meteor.publish("subscribeTableHands", function(tableId: string): any {
+        check(tableId, String);
+
+        return DBCollection.TableHands.find({
+            tableId: tableId,
+        }, {
+            sort: { index: -1 },
+        });
+    });
 }

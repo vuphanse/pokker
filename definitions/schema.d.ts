@@ -5,13 +5,28 @@ declare module DB {
         Closed  = 2,
     }
 
+    export enum ETableHandRoundType {
+        Preflop = 0,
+        Flop    = 1,
+        Turn    = 2,
+        River   = 3,
+    }
+
+    export enum ETableHandRoundActionType {
+        Fold    = 0,
+        Check   = 1,
+        Bet     = 2,
+        Raise   = 3,
+        Call    = 4,
+    }
+
     export interface Table {
         _id?: string;
         name: string;
         createdAt: Date;
         hostId: string;
         settings: TableSettings;
-        players: Player[];
+        currentPlayers: Player[];
         status: number;
     }
     
@@ -24,7 +39,33 @@ declare module DB {
     
     export interface Player {
         _id?: string;
-        name: string;
-        stack: number;
+        name?: string;
+        stack?: number;
+        seatIndex?: number;
+    }
+
+    export interface HandPlayer extends Player {
+        isSB?: boolean;
+        isBB?: boolean;
+    }
+
+    export interface TableHand {
+        _id?: string;
+        index: number;
+        tableId: string;
+        players: HandPlayer[];
+        rounds?: TableHandRound[];
+        isFinished: boolean;
+        winner?: HandPlayer;
+    }
+
+    export interface TableHandRound {
+        type: ETableHandRoundType;
+        actions?: TableHandRoundAction[];
+    }
+
+    export interface TableHandRoundAction {
+        actionType: ETableHandRoundActionType;
+        amount?: number;
     }
 }

@@ -2,48 +2,58 @@ export module UIPopup {
     type getParentInstanceType = JQuery | Element | Blaze.View | Blaze.TemplateInstance;
     
     export function getParentInstanceUntil(elementOrViewOrInstance: getParentInstanceType, parentTemplate: Blaze.Template): Blaze.TemplateInstance {
-		let parentView: any = null;
+        let parentView: any = null;
 
-		if (elementOrViewOrInstance instanceof Blaze.TemplateInstance) {
-			if (elementOrViewOrInstance.view["name"] == parentTemplate.viewName)
-				parentView = elementOrViewOrInstance.view;
-			else
-				parentView = Blaze.getView(elementOrViewOrInstance.view as HTMLElement);
-		} else if (elementOrViewOrInstance instanceof Blaze.View) {
-			if (elementOrViewOrInstance.name == parentTemplate.viewName)
-				parentView = elementOrViewOrInstance;
-			else
-				parentView = Blaze.getView(elementOrViewOrInstance as any);
-		} else if (elementOrViewOrInstance instanceof $) {
-			parentView = Blaze.getView(<any>(<JQuery>elementOrViewOrInstance)[0]);
-		} else {
-			parentView = Blaze.getView(<any>elementOrViewOrInstance);
-		}
+        if (elementOrViewOrInstance instanceof Blaze.TemplateInstance) {
+            if (elementOrViewOrInstance.view["name"] == parentTemplate.viewName)
+                parentView = elementOrViewOrInstance.view;
+            else
+                parentView = Blaze.getView(elementOrViewOrInstance.view as HTMLElement);
+        } else if (elementOrViewOrInstance instanceof Blaze.View) {
+            if (elementOrViewOrInstance.name == parentTemplate.viewName)
+                parentView = elementOrViewOrInstance;
+            else
+                parentView = Blaze.getView(elementOrViewOrInstance as any);
+        } else if (elementOrViewOrInstance instanceof $) {
+            parentView = Blaze.getView(<any>(<JQuery>elementOrViewOrInstance)[0]);
+        } else {
+            parentView = Blaze.getView(<any>elementOrViewOrInstance);
+        }
 
-		while (parentView && !parentView.templateInstance)
-			parentView = parentView.parentView;
+        while (parentView && !parentView.templateInstance)
+            parentView = parentView.parentView;
 
-		return parentView ? parentView.templateInstance() : null;
-	}
+        return parentView ? parentView.templateInstance() : null;
+    }
 
     export function show(options: UIPopupOptions): void {
         let popupView = Blaze.getView(document.querySelector("#popup-manager"));
         if (popupView.template.viewName.indexOf("templatePopupManager") < 0)
             return;
 
-        console.log(popupView);
         let popupInstance = <TemplatePopupManagerInstance>popupView.templateInstance();
-        if (options.modalOptions || !popupInstance.modal) {
+        if (options.modalOptions || !popupInstance.modalInstance) {
             clear(popupInstance);
             update(popupInstance, options);
-            popupInstance.modal = $(popupInstance.rootElement).modal(options.modalOptions || {});
+            popupInstance.modalInstance = $(popupInstance.rootElement).modal(options.modalOptions || {});
             return;
         }
 
         update(popupInstance, options);
-        Tracker.afterFlush(function(popupInstance: TemplatePopupManagerInstance): void {
-            popupInstance.modal.modal("show");
+        Tracker.afterFlush(function(): void {
+            popupInstance.modalInstance.modal("handleUpdate");
+            popupInstance.modalInstance.modal("show");
         });
+    }
+
+    export function close(): void {
+        let popupView = Blaze.getView(document.querySelector("#popup-manager"));
+        if (popupView.template.viewName.indexOf("templatePopupManager") < 0)
+            return;
+
+        let popupInstance = <TemplatePopupManagerInstance>popupView.templateInstance();
+        popupInstance.modalInstance.modal("hide");
+        clear(popupInstance);
     }
 
     interface UIPopupOptions {
@@ -61,7 +71,7 @@ export module UIPopup {
 
     interface TemplatePopupManagerInstance extends Blaze.TemplateInstance {
         rootElement: HTMLElement;
-        modal: BoostrapModal;
+        modalInstance: BoostrapModal;
         customTemplate: ReactiveVar<string>;
         customData: ReactiveVar<any>;
         title: ReactiveVar<string>;
@@ -104,7 +114,7 @@ export module UIPopup {
     });
 
     interface BoostrapModal {
-        modal: (command: "toggle" | "show" | "hide") => void;
+        modal: (command: "toggle" | "show" | "hide" | "handleUpdate") => void;
         show: () => void;
         hide: () => void;
     }

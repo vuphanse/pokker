@@ -1,3 +1,40 @@
+<template name="templateTableWrapper">
+    {{#with tableData}}
+        {{> templateTable}}
+    {{/with}}
+</template>
+
 <template name="templateTable">
-    This is a table
+    <div class="p-table">
+        Table: {{name}}
+        {{handIndex}}
+        {{#each seats}}
+            {{> templateTableSeat}}
+        {{/each}}
+        <div class="p-table-main">
+            {{#if currentHand}}
+                {{pot}}
+            {{else}}
+                {{> templateUIButton newHandBtnOptions}}
+            {{/if}}
+        </div>
+    </div>
+</template>
+
+<template name="templateTableSeat">
+    <div class="p-seat">
+        {{#if isEmpty}}
+            {{> templateUIButton addPlayerBtnOptions}}
+        {{else}}
+            <div class="p-seat-name">{{name}}</div>
+            <div class="p-seat-stack">{{stack}}</div>
+
+            {{#if isSB}}
+                SB
+            {{/if}}
+            {{#if isBB}}
+                BB
+            {{/if}}
+        {{/if}}
+    </div>
 </template>

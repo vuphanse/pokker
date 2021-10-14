@@ -1,5 +1,6 @@
 /// <reference path="../definitions/index.d.ts"/>
 
+import { DBCollection } from "./collections";
 import { AuthRouter } from "./router-auth";
 
 Router.configure({
@@ -32,7 +33,10 @@ Router.route("/table/:tableId", {
     name: "table",
     action: function(this: Iron.RouteController): void {
         let self = this;
-        self.render("templateTable");
+        self._rendered = true;
+
+        let tableId = this.params.tableId;
+        self.render("templateTableWrapper", { data: { tableId } });
     },
 });
 
