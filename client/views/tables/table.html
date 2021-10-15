@@ -6,19 +6,37 @@
 
 <template name="templateTable">
     <div class="p-table">
-        Table: {{name}}
-        {{handIndex}}
-        <div class="p-table-seats">
-            {{#each seats}}
+        <div class="p-table-info">
+            <!-- <div class="name">
+                Table: {{name}}
+            </div> -->
+            <div class="hand">
+                {{handIndex}}
+            </div>
+            <div class="round">
+                {{round}}
+            </div>
+        </div>
+        <div class="p-table-seats top">
+            {{#each firstRowSeats}}
                 {{> templateTableSeat}}
             {{/each}}
         </div>
         <div class="p-table-main">
             {{#if currentHand}}
-                {{pot}}
+                <div class="pot">
+                    {{pot}}
+                </div>
             {{else}}
-                {{> templateUIButton newHandBtnOptions}}
+                {{#with newHandBtnOptions}}
+                    {{> templateUIButton}}
+                {{/with}}
             {{/if}}
+        </div>
+        <div class="p-table-seats bottom">
+            {{#each secondRowSeats}}
+                {{> templateTableSeat}}
+            {{/each}}
         </div>
     </div>
 </template>

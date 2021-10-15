@@ -67,5 +67,6 @@ declare module DB {
     export interface TableHandRoundAction {
         actionType: ETableHandRoundActionType;
         amount?: number;
+        byPlayer: HandPlayer;
     }
 }
