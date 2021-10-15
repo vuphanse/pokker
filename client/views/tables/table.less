@@ -10,25 +10,54 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-evenly;
-    margin: 20px 0;
-}
+    margin: 8px 0;
 
-.p-table {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 64px 0;
-    background-color: @gray-lighter;
+    .p-seat {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
 
-    .p-table-info {
-        .hand {
-            font-size: 32px;
+        .p-money-onround {
+            margin: 0 0 8px 0;
+            text-align: center;
+            font-size: 12px;
+            background-color: lighten(yellow, 25%);
+            border-radius: 50%;
+            border: 1px solid @gray;
+            box-shadow: 1px 1px lighten(@gray, 40%);
+            width: fit-content;
+            padding: 8px;
+            visibility: hidden;
+
+            &.mod-visible {
+                visibility: visible;
+            }
         }
 
-        .round {
-            font-size: 20px;
-            text-transform: uppercase;
+        .setwinner-btn {
+            visibility: hidden;
+
+            &.mod-visible {
+                visibility: visible;
+            }
+        }
+
+        .p-seat-player {
+            margin-bottom: 8px;
+        }
+    }
+
+    &.top {
+        .p-seat {
+            flex-direction: column-reverse;
+            .p-money-onround {
+                margin: 8px 0 0 0;
+            }
+        }
+
+        .p-seat-player {
+            margin-top: 8px;
         }
     }
 }
@@ -36,7 +65,7 @@
 .p-table-main {
     background: #2D8A55;
     border-radius: 180px;
-    height: 240px;
+    height: 400px;
     width: 80%;
     
     display: flex;
@@ -50,30 +79,30 @@
 
     .pot {
         text-align: center;
-        height: 44px;
-        font-size: 32px;
-        line-height: 44px;
-        background-color: lighten(yellow, 25%);
-        border-radius: 8px;
+        font-size: 24px;
+        line-height: 24px;
+        background-color: lighten(yellow, 10%);
+        border-radius: 48%;
         border: 1px solid @gray;
         box-shadow: 1px 1px lighten(@gray, 40%);
         width: fit-content;
         min-width: 100px;
+        padding: 16px;
     }
 }
 
 .p-seat-player {
     align-items: center;
-    border-radius: 16px;
-    background: lighten(black, 25%);
+    border-radius: 14px;
+    background: lighten(black, 30%);
     color: white;
     column-gap: 10px;
     display: flex;
     flex-wrap: nowrap;
     font-weight: 600;
     justify-content: space-between;
-    width: 160px;
-    padding: 1.5rem;
+    width: 172px;
+    padding: 16px;
     margin: 0 16px; 
 
     .p-seat-blind {
@@ -81,13 +110,16 @@
         background: lighten(white, 30%);
         color: black;
         display: flex;
-        font-weight: 600;
-        height: 32px;
-        width: 32px;
+        font-weight: 800;
+        font-size: 9px;
+        height: 18px;
+        width: 18px;
+        padding: 4px;
+        border-radius: 50%;
     }
 
     .p-seat-info {
-        max-width: 70%;
+        max-width: 90%;
         
         .p-seat-name {
             font-size: 18px;
@@ -98,24 +130,133 @@
 
         .p-seat-stack {
             font-size: 14px;
+            color: lighten(yellow, 10%);
+        }
+    }
 
+    &.next-to-act {
+        border: 1px solid lighten(red, 80%);
+        background-color: lighten(@brand-danger, 5%);
+        animation-duration: 1.0s;
+        animation-fill-mode: both;
+        animation-iteration-count: infinite;
+        position: relative;
+        animation-name: anim-item-pulse;
+    }
+
+    &.mod-folded {
+        background-color: @gray-light;
+    }
+}
+
+.table-section {
+    display: flex;
+    flex-direction: row;
+    flex: 1 1 auto;
+    width: 100%;
+    max-height: 90vh;
+    padding: 16px 0;
+
+    .p-handlog {
+        font-family: Consolas, monaco, monospace;
+        color: lighten(black, 10%);
+        display: flex;
+        flex-direction: column;
+        font-size: 12px;
+        padding: 0 32px;
+        overflow-y: auto;
+        max-width: 20%;
+    
+        .p-handlog-title {
+            font-weight: 600;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        h6 {
+            margin: 0 0 8px 0;
+        }
+
+        h5 {
+            margin: 0;
+            padding: 16px 0 8px 0;
+            border-top: 1px dashed darkgray;
+        }
+    }
+
+    .p-table {
+        font-family: Consolas, monaco, monospace;
+        align-items: center;
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+        justify-content: center;
+
+        .p-table-info {
+            .hand {
+                font-size: 32px;
+            }
+
+            .round {
+                font-size: 20px;
+                text-transform: uppercase;
+            }
         }
     }
 }
 
-.p-handlog {
-    border: 1px solid black;
-    border-radius: 5px;
-    color: lighten(black, 10%);
-    left: 10px;
-    max-width: 190px;
-    position: absolute;
-    padding: 0rem 0.5rem 1rem;
-    top: 15%;
+.tool-section {
+    font-family: Consolas, monaco, monospace;
+    display: flex;
+    flex: 0 0  auto;
+    flex-direction: row;
+    padding: 32px;
+    background-color: lighten(black, 60%);
+    justify-content: space-between;
 
-    .p-handlog-title {
-        font-weight: 600;
-        font-size: 28px;
-        margin-bottom: 8px;
+    .ui-button {
+        min-width: 100px;
+        margin: 16px 16px 0 0;
     }
+
+    .bet-btns {
+        margin: 16px 0 0;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+
+        .ui-input {
+            max-width: 100px;
+
+            input {
+                width: 100%;
+            }
+        }
+
+        .ui-button {
+            margin: 0 0 0 16px;
+        }
+    }
+}
+
+@item-pulse-color: lighten(red, 30%);
+@item-pulse-color-transparent: fade(@item-pulse-color, 0%);
+
+@keyframes anim-item-pulse {
+	0% {
+		box-shadow: 0 0 0 0 @item-pulse-color-transparent;
+	}
+	10% {
+		animation-timing-function: cubic-bezier(0.0, 1.0, 1.0, 1.0);
+	}
+	11% {
+		box-shadow: 0 0 0 0 @item-pulse-color-transparent;
+	}
+	12% {
+		animation-timing-function: cubic-bezier(0.0, 1.0, 1.0, 1.0);
+		box-shadow: 0 0 0 2px @item-pulse-color;
+	}
+	100% {
+		box-shadow: 0 0 0 16px fade(@item-pulse-color, 0%);
+	}
 }

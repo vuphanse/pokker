@@ -18,6 +18,7 @@ declare module DB {
         Bet     = 2,
         Raise   = 3,
         Call    = 4,
+        AllIn   = 5,
     }
 
     export interface Table {
@@ -57,11 +58,13 @@ declare module DB {
         rounds?: TableHandRound[];
         isFinished: boolean;
         winner?: HandPlayer;
+        cards?: string[];
     }
 
     export interface TableHandRound {
         type: ETableHandRoundType;
         actions?: TableHandRoundAction[];
+        cards?: string[];
     }
 
     export interface TableHandRoundAction {

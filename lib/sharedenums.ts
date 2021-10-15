@@ -20,5 +20,6 @@ export module ENUMS {
         Bet     = 2,
         Raise   = 3,
         Call    = 4,
+        AllIn   = 5,
     }
 }

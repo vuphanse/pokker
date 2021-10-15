@@ -124,7 +124,7 @@ export module UIPopup {
 
         popupInstance.customData.set(customData);
         popupInstance.customTemplate.set(customTemplate);
-        popupInstance.modClasses.set(title);
+        popupInstance.title.set(title);
         popupInstance.modClasses.set(modClasses);
     }
 

@@ -5,44 +5,85 @@
 </template>
 
 <template name="templateTable">
-    {{#with currentHand}}
-        <div class="p-handlog">
-            <div class="p-handlog-title">Hand Log</div>
-            {{> templateTableHandLog}}
-        </div>
-        {{/with}}
-    <div class="p-table">
-        <div class="p-table-info">
-            <!-- <div class="name">
-                Table: {{name}}
-            </div> -->
-            <div class="hand">
-                {{handIndex}}
+    <div class="play-table">
+        <div class="table-section">
+            <div class="p-handlog">
+                <div class="p-handlog-title">Log</div>
+                {{#each handsToLog}}
+                    <h5>Hand #{{index}}</h5>
+                    {{> templateTableHandLog}}
+                {{/each}}
             </div>
-            <div class="round">
-                {{round}}
-            </div>
-        </div>
-        <div class="p-table-seats top">
-            {{#each firstRowSeats}}
-                {{> templateTableSeat}}
-            {{/each}}
-        </div>
-        <div class="p-table-main">
-            {{#if currentHand}}
-                <div class="pot">
-                    {{pot}}
+
+            <div class="p-table">
+                <div class="p-table-info">
+                    <div class="hand">
+                        {{handIndex}}
+                    </div>
+                    <div class="round">
+                        {{round}}
+                    </div>
                 </div>
-            {{else}}
-                {{#with newHandBtnOptions}}
-                    {{> templateUIButton}}
-                {{/with}}
-            {{/if}}
-        </div>
-        <div class="p-table-seats bottom">
-            {{#each secondRowSeats}}
-                {{> templateTableSeat}}
-            {{/each}}
+                <div class="p-table-seats top">
+                    {{#each firstRowSeats}}
+                        {{> templateTableSeat}}
+                    {{/each}}
+                </div>
+                <div class="p-table-main">
+                    {{#if currentHand}}
+                        <div class="pot">
+                            {{pot}}
+                        </div>
+                        <div class="cards">
+                            {{#each cards}}
+                                {{this}}
+                            {{/each}}
+                        </div>
+                    {{else}}
+                        {{#with newHandBtnOptions}}
+                            {{> templateUIButton}}
+                        {{/with}}
+                    {{/if}}
+                </div>
+                <div class="p-table-seats bottom">
+                    {{#each secondRowSeats}}
+                        {{> templateTableSeat}}
+                    {{/each}}
+                </div>
+            </div>
+            {{#if isEditable}}
+            <div class="tool-section">
+                <div class="player-action-buttons">
+                    {{#if nextToActPlayer}}
+                        <h4>Player: {{nextToActPlayer.name}} Seat #{{nextToActPlayer.seatIndex}}</h4>
+                        <div class="normal-btns">
+                            {{> templateUIButton foldBtnOption}}
+                            {{> templateUIButton checkBtnOptions}}
+                            {{> templateUIButton callBtnOptions}}
+                        </div>
+                        <div class="bet-btns">
+                            {{> templateUIInput amountInputOptions}}
+                            <div class="btns">
+                                {{> templateUIButton betBtnOptions}}
+                                {{> templateUIButton raiseBtnOptions}}
+                            </div>
+                        </div>
+                        <div class="allin">
+                            {{> templateUIButton allInBtnOptions}}
+                        </div>
+                    {{/if}}
+                    <hr>
+                    <div class="game-buttons">
+                        <h3>{{round}} Round</h3>
+                        {{> templateUIButton startNextRoundBtnOptions}}
+                        <div class="addcards-ui">
+                            {{> templateUIInput addCardsInputOptions}}
+                            {{> templateUIButton addCardsBtnOptions}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {{/if}}
         </div>
     </div>
 </template>
@@ -50,9 +91,20 @@
 <template name="templateTableSeat">
     <div class="p-seat">
         {{#if isEmpty}}
-            {{> templateUIButton addPlayerBtnOptions}}
+            <div class="p-seat-player">
+                {{#if editable}}
+                    {{> templateUIButton addPlayerBtnOptions}}
+                {{else}}
+                <div class="p-seat-info">
+                    Empty seat
+                </div>
+                {{/if}}
+            </div>
         {{else}}
-            <div class='p-seat-player'> 
+            <div class="p-money-onround {{#if totalOnRound}}mod-visible{{/if}}">
+                {{totalOnRound}}
+            </div>
+            <div class="p-seat-player {{#if folded}}mod-folded{{/if}} {{#if nextToAct}}next-to-act{{/if}}"> 
                 {{#if isSB}}
                     <div class="p-seat-blind badge">
                         SB
@@ -64,10 +116,24 @@
                     </div>
                 {{/if}}
                 <div class="p-seat-info">
+                    #{{seatIndex}} {{#if folded}}(Folded){{/if}}
                     <div class="p-seat-name">{{name}}</div>
                     <div class="p-seat-stack">{{stack}}</div>
                 </div>
             </div>
+            {{#if editable}}
+                {{#with setWinnerBtnOptions}}
+                    {{> templateUIButton}}
+                {{/with}}
+                <div class="buttons">
+                    {{#with leaveBtnOptions}}
+                        {{> templateUIButton}}
+                    {{/with}}
+                    {{#with editStackBtnOptions}}
+                        {{> templateUIButton}}
+                    {{/with}}
+                </div>
+            {{/if}}
         {{/if}}
     </div>
 </template>

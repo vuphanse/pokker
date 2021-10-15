@@ -1,10 +1,12 @@
 <template name="templateTableHandLog">
-    {{#with logData}}
-        {{#each this}}
+    {{#each this.rounds}}
+        <h6>{{roundText}}</h6>
+        <h7>Dealt: {{cardsText}}</h7>
+        {{#each getRoundLogs this}}
             <div class="p-log">
                 <div class="p-log-time">{{date}}</div>
                 <div class="p-log-message">{{message}}</div>
             </div>
         {{/each}}
-    {{/with}}
+    {{/each}}
 </template>

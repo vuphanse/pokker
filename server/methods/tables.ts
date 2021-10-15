@@ -1,12 +1,19 @@
 import { ENUMS } from "../../lib/sharedenums";
+import { getCards, getNextPlayerToAct, getPot, isFoldedSeatIndex } from "../../lib/tablelogic";
 import { DBCollection } from "./../../lib/collections";
 import { checkUserAccess } from "./../security/security";
 
-Meteor.startup(() => DBCollection.TableHands.remove({}));
+const ranks: string[] = ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"];
+const suits: string[] = ["s", "c", "d", "h"];
+
+Meteor.startup(function(): void {
+    // DBCollection.Tables.remove({});
+    // DBCollection.TableHands.remove({});
+});
 
 module MainApp {
-    const SB = 2;
-    const BB = 4;
+    const SB = 10;
+    const BB = 20;
     const ANTE = 0;
 
     Meteor.methods({
@@ -42,7 +49,7 @@ module MainApp {
             check(index, Match.Optional(Number));
             checkUserAccess();
 
-            let table = checkAndGetTable(tableId);
+            let table = checkAccessAndGetTable(tableId);
             if (table.currentPlayers.length < 2)
                 throw new Meteor.Error(403, "Not enough players to start a hand, minimum is 2");
 
@@ -52,10 +59,13 @@ module MainApp {
             if (index === undefined)
                 index = DBCollection.TableHands.find({ tableId }).count() + 1;
 
+            let currentPlayers = table.currentPlayers.sort((a, b) => a.seatIndex - b.seatIndex);
+            currentPlayers.forEach((p: DB.HandPlayer) => { delete p.isSB; delete p.isBB });
+
             let hand: DB.TableHand = {
                 index,
                 tableId,
-                players: table.currentPlayers,
+                players: currentPlayers,
                 rounds: [],
                 isFinished: false,
             };
@@ -63,6 +73,8 @@ module MainApp {
             let SBPlayerIndex = hand.players.findIndex(player => player.seatIndex == sbSeatIndex);
             let SBPlayer = hand.players[SBPlayerIndex];
             let BBPlayer = hand.players[SBPlayerIndex + 1];
+            if (!BBPlayer)
+                BBPlayer = hand.players[0];
 
             hand.rounds.push({
                 type: ENUMS.ETableHandRoundType.Preflop,
@@ -77,6 +89,7 @@ module MainApp {
                     byPlayer: BBPlayer,
                     date: new Date(),
                 }],
+                cards: [],
             });
 
             SBPlayer.isSB = true;
@@ -94,9 +107,9 @@ module MainApp {
             check(name, String);
             check(stack, Number);
 
-            let table = checkAndGetTable(tableId);
+            let table = checkAccessAndGetTable(tableId);
             if (isTableInPlayingHand(tableId))
-                throw new Meteor.Error(403, "Cannot start new hand if last one is not finished");
+                throw new Meteor.Error(403, "Cannot add user while in hand");
 
             if (!table.currentPlayers)
                 table.currentPlayers = [];
@@ -119,6 +132,113 @@ module MainApp {
             });
         },
 
+        removePlayerFromTable: function(tableId: string, seatIndex: number): void {
+            check(tableId, String);
+            check(seatIndex, Number);
+            let table = checkAccessAndGetTable(tableId);
+
+            if (isTableInPlayingHand(tableId))
+                throw new Meteor.Error(403, "Cannot remove user while in hand");
+
+            let players = table.currentPlayers.filter(p => p.seatIndex !== seatIndex);
+
+            DBCollection.Tables.update({
+                _id: tableId,
+            }, {
+                $set: {
+                    currentPlayers: players,
+                },
+            });
+        },
+
+        addChipToPlayerStack: function(tableId: string, seatIndex: number, addAmount: number): void {
+            check(tableId, String);
+            check(seatIndex, Number);
+            check(addAmount, Number);
+
+            let table = checkAccessAndGetTable(tableId);
+            if (isTableInPlayingHand(tableId))
+                throw new Meteor.Error(403, "Cannot add chip to player stack while in hand");
+
+            let player = table.currentPlayers.find(p => p.seatIndex == seatIndex);
+            player.stack = player.stack + addAmount;
+
+            if (player.stack < 0)
+                throw new Meteor.Error("Stack cannot be negative");
+
+            DBCollection.Tables.update({
+                _id: tableId,
+            }, {
+                $set: {
+                    currentPlayers: table.currentPlayers,
+                },
+            });
+        },
+
+        startNextRound: function(handId: string): void {
+            check(handId, String);
+            checkUserAccess();
+
+            let hand = checkAccessAndGetHand(handId);
+            let lastRoundType = hand.rounds[hand.rounds.length - 1].type;
+
+            if (lastRoundType == ENUMS.ETableHandRoundType.River)
+                throw new Meteor.Error(403, "Cannot start new round on River");
+
+            let nextRoundType: ENUMS.ETableHandRoundType;
+            if (lastRoundType == ENUMS.ETableHandRoundType.Preflop)
+                nextRoundType = ENUMS.ETableHandRoundType.Flop;
+            else if (lastRoundType == ENUMS.ETableHandRoundType.Flop)
+                nextRoundType = ENUMS.ETableHandRoundType.Turn;
+            else if (lastRoundType == ENUMS.ETableHandRoundType.Turn)
+                nextRoundType = ENUMS.ETableHandRoundType.River;
+
+            let round: DB.TableHandRound = {
+                type: nextRoundType,
+                actions: [],
+            };
+
+            hand.rounds.push(round);
+
+            DBCollection.TableHands.update({
+                _id: handId,
+            }, {
+                $set: {
+                    rounds: hand.rounds,
+                },
+            });
+        },
+
+        setHandWinner: function(handId: string, seatIndex: number): void {
+            check(handId, String);
+            let hand = checkAccessAndGetHand(handId);
+
+            if (isFoldedSeatIndex(hand, seatIndex))
+                throw new Meteor.Error(403, "Folded seat cannot win hand");
+            
+            let pot = getPot(hand);
+            let player = hand.players.find(player => player.seatIndex == seatIndex);
+            player.stack = player.stack + pot;
+
+            DBCollection.TableHands.update({
+                _id: handId,
+            }, {
+                $set: {
+                    players: hand.players,
+                    winner: player,
+                    isFinished: true,
+                },
+            });
+
+            DBCollection.Tables.update({
+                _id: hand.tableId
+            }, {
+                $set: {
+                    currentPlayers: hand.players,
+                },
+            });
+        },
+
         takeHandRoundAction: function(handId: string, bySeatIndex: number, actionType: ENUMS.ETableHandRoundActionType, amount: number = 0): void {
             check(handId, String);
             check(bySeatIndex, Number);
@@ -126,21 +246,18 @@ module MainApp {
             check(amount, Number);
             checkUserAccess();
 
-            let hand = checkAndGetHand(handId);
+            let hand = checkAccessAndGetHand(handId);
             let curentRound = hand.rounds[hand.rounds.length - 1];
 
             if (!curentRound.actions) {
                 curentRound.actions = [];
             } else {
                 let lastAction = curentRound.actions[curentRound.actions.length - 1];
-                if (lastAction.byPlayer.seatIndex == bySeatIndex)
+                if (lastAction?.byPlayer?.seatIndex == bySeatIndex)
                     throw new Meteor.Error(403, "Already took action");
     
-                let nextPlayerToAct = hand.players.find(player => player.seatIndex > lastAction.byPlayer.seatIndex);
-                if (!nextPlayerToAct)
-                    hand.players.find(player => player.seatIndex < lastAction.byPlayer.seatIndex);
-
-                if (nextPlayerToAct.seatIndex !== bySeatIndex)
+                let nextPlayerToAct = getNextPlayerToAct(hand);
+                if (!nextPlayerToAct || nextPlayerToAct.seatIndex !== bySeatIndex)
                     throw new Meteor.Error(403, "Not this seat turn to act");
             }
 
@@ -153,11 +270,6 @@ module MainApp {
                 date: new Date(),
             });
 
-            console.log(JSON.stringify({
-                players: hand.players,
-                rounds: hand.rounds,
-            }, null, 4));
-
             DBCollection.TableHands.update({
                 _id: handId,
             }, {
@@ -167,7 +279,59 @@ module MainApp {
                 },
             });
         },
+
+        addRoundCards: function(handId: string, cards: string): void {
+            check(handId, String);
+            check(cards, String);
+
+            let hand = checkAccessAndGetHand(handId);
+            let currentRound = hand.rounds[hand.rounds.length - 1];
+            if (currentRound.type == ENUMS.ETableHandRoundType.Preflop)
+                throw new Meteor.Error(403, "Cannot reveal hand in Preflop");
+
+            let cardsToAdd = cards.trim().split(" ");
+            let handCards = getCards(hand);
+
+            cardsToAdd.forEach(function(card: string): void {
+                checkCard(card);
+                if (handCards.indexOf(card) >= 0)
+                    throw new Meteor.Error(403, `Card ${card} is added already`);
+            });
+
+            if (currentRound.type === ENUMS.ETableHandRoundType.Flop && cardsToAdd.length !== 3)
+                throw new Meteor.Error(403, "Must reveal 3 cards in Flop");
+
+            if (currentRound.type === ENUMS.ETableHandRoundType.Turn && cardsToAdd.length !== 1)
+                throw new Meteor.Error(403, "Must reveal 1 cards in Turn");
+
+            if (currentRound.type === ENUMS.ETableHandRoundType.River && cardsToAdd.length !== 1)
+                throw new Meteor.Error(403, "Must reveal 1 cards in River");
+
+            if (!currentRound.cards)
+                currentRound.cards = [];
+                
+            currentRound.cards.push(...cardsToAdd);
+
+            DBCollection.TableHands.update({
+                _id: handId,
+            }, {
+                $set: {
+                    rounds: hand.rounds,
+                },
+            });
+        },
     });
+
+    function checkCard(card: string): void {
+        if (card.length !== 2)
+            throw new Meteor.Error(403, "Invalid card length");
+
+        if (ranks.indexOf(card[0]) < 0)
+            throw new Meteor.Error(403, "Invalid card rank");
+
+        if (suits.indexOf(card[1]) < 0)
+            throw new Meteor.Error(403, "Invalid card suit");
+    }
 
     function isTableInPlayingHand(tableId: string): boolean {
         return !!DBCollection.TableHands.findOne({
@@ -178,18 +342,23 @@ module MainApp {
         });
     }
 
-    function checkAndGetTable(tableId: string): DB.Table {
+    function checkAccessAndGetTable(tableId: string): DB.Table {
         let table = DBCollection.Tables.findOne(tableId);
         if (!table)
             throw new Meteor.Error(403, "Invalid table");
 
+        if (table.hostId !== Meteor.userId())
+            throw new Meteor.Error(403, "Only host can add logs for the table");
+
         return table;
     }
 
-    function checkAndGetHand(handId: string): DB.TableHand {
+    function checkAccessAndGetHand(handId: string): DB.TableHand {
         let hand = DBCollection.TableHands.findOne(handId);
         if (!hand)
             throw new Meteor.Error(403, "Invalid table");
+
+        checkAccessAndGetTable(hand.tableId);
 
         return hand;
     }

@@ -6,6 +6,11 @@ module MainApp {
         seatIndex: number;
     }
 
+    interface TemplateEditPlayerStackInstance extends Blaze.TemplateInstance {
+        data: AddPlayerOptions;
+        plusStackAmount: ReactiveVar<number>;
+    }
+
     interface TemplateAddPlayerToTableInstance extends Blaze.TemplateInstance {
         data: AddPlayerOptions;
         name: ReactiveVar<string>;
@@ -14,7 +19,11 @@ module MainApp {
 
     Template.templateAddPlayerToTable.onCreated(function(this: TemplateAddPlayerToTableInstance): void {
         this.name = new ReactiveVar("");
-        this.stack = new ReactiveVar(0);
+        this.stack = new ReactiveVar(1000);
+    });
+
+    Template.templateEditPlayerStack.onCreated(function(this: TemplateEditPlayerStackInstance): void {
+        this.plusStackAmount = new ReactiveVar(200);
     });
 
     Template.templateAddPlayerToTable.helpers({
@@ -47,6 +56,27 @@ module MainApp {
         },
     });
 
+    Template.templateEditPlayerStack.helpers({
+        stackInputOptions: function(): AppUI.UIInputOptions {
+            let tpl = <TemplateEditPlayerStackInstance>Template.instance();
+            return {
+                type: "number",
+                onInputChange: value => tpl.plusStackAmount.set(parseInt(value) || 0),
+                label: "Amount",
+                value: tpl.plusStackAmount.get() + "",
+            };
+        },
+        updateBtnOptions: function(): AppUI.UIButtonOptions {
+            let tpl = <TemplateEditPlayerStackInstance>Template.instance();
+            return {
+                text: "Add to stack",
+                onClick: function(): void {
+                    updateStack(tpl);
+                },
+            };
+        },
+    });
+
     function addPlayer(tpl: TemplateAddPlayerToTableInstance): void {
         let name = tpl.name.get();
         let stack = tpl.stack.get();
@@ -55,6 +85,13 @@ module MainApp {
             return;
 
         Meteor.call("addPlayerToTable", tpl.data.tableId, tpl.data.seatIndex, name, stack, function(error: Meteor.Error): void {
+            if (!error)
+                UIPopup.close();
+        });
+    }
+
+    function updateStack(tpl: TemplateEditPlayerStackInstance): void {
+        Meteor.call("addChipToPlayerStack", tpl.data.tableId, tpl.data.seatIndex, tpl.plusStackAmount.get(), function(error: Meteor.Error): void {
             if (!error)
                 UIPopup.close();
         });
