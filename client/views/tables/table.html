@@ -8,9 +8,11 @@
     <div class="p-table">
         Table: {{name}}
         {{handIndex}}
-        {{#each seats}}
-            {{> templateTableSeat}}
-        {{/each}}
+        <div class="p-table-seats">
+            {{#each seats}}
+                {{> templateTableSeat}}
+            {{/each}}
+        </div>
         <div class="p-table-main">
             {{#if currentHand}}
                 {{pot}}
@@ -26,15 +28,22 @@
         {{#if isEmpty}}
             {{> templateUIButton addPlayerBtnOptions}}
         {{else}}
-            <div class="p-seat-name">{{name}}</div>
-            <div class="p-seat-stack">{{stack}}</div>
-
-            {{#if isSB}}
-                SB
-            {{/if}}
-            {{#if isBB}}
-                BB
-            {{/if}}
+            <div class='p-seat-player'> 
+                {{#if isSB}}
+                    <div class="p-seat-blind badge">
+                        SB
+                    </div>
+                {{/if}}
+                {{#if isBB}}
+                    <div class="p-seat-blind badge">
+                        BB
+                    </div>
+                {{/if}}
+                <div class="p-seat-info">
+                    <div class="p-seat-name">{{name}}</div>
+                    <div class="p-seat-stack">{{stack}}</div>
+                </div>
+            </div>
         {{/if}}
     </div>
 </template>

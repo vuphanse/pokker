@@ -89,7 +89,7 @@ module MainApp {
         addPlayerBtnOptions: function(this: HandSeat): AppUI.UIButtonOptions {
             let self = this;
             return {
-                text: "Take seat",
+                text: `Take seat ${self.seatIndex}`,
                 onClick: function(): void {
                     UIPopup.show({
                         customData: {
