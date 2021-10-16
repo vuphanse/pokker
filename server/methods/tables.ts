@@ -2,7 +2,7 @@ import { ENUMS } from "../../lib/sharedenums";
 import { DBCollection } from "./../../lib/collections";
 import { checkUserAccess } from "./../security/security";
 
-// Meteor.startup(() => DBCollection.TableHands.remove({}));
+Meteor.startup(() => DBCollection.TableHands.remove({}));
 
 module MainApp {
     const SB = 2;
@@ -70,10 +70,12 @@ module MainApp {
                     actionType: ENUMS.ETableHandRoundActionType.Bet,
                     amount: table.settings.smallBlind,
                     byPlayer: SBPlayer,
+                    date: new Date(),
                 }, {
                     actionType: ENUMS.ETableHandRoundActionType.Raise,
                     amount: table.settings.bigBlind,
                     byPlayer: BBPlayer,
+                    date: new Date(),
                 }],
             });
 
@@ -148,6 +150,7 @@ module MainApp {
                 actionType: actionType,
                 amount,
                 byPlayer,
+                date: new Date(),
             });
 
             console.log(JSON.stringify({

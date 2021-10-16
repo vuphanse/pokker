@@ -68,5 +68,6 @@ declare module DB {
         actionType: ETableHandRoundActionType;
         amount?: number;
         byPlayer: HandPlayer;
+        date: Date;
     }
 }
