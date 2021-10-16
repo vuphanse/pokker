@@ -75,7 +75,8 @@ module MainApp {
             let seats = getSeats(tpl);
 
             let index = Math.round(seats.length / 2);
-            let secondRow = seats.splice(index + 1, seats.length);
+            let secondRow = seats.splice(index, seats.length);
+            
             return secondRow;
         },
         currentHand: function(): DB.TableHand {
