@@ -5,6 +5,12 @@
 </template>
 
 <template name="templateTable">
+    {{#with currentHand}}
+        <div class="p-handlog">
+            <div class="p-handlog-title">Hand Log</div>
+            {{> templateTableHandLog}}
+        </div>
+        {{/with}}
     <div class="p-table">
         <div class="p-table-info">
             <!-- <div class="name">

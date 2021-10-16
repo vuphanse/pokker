@@ -1,0 +1,10 @@
+<template name="templateTableHandLog">
+    {{#with logData}}
+        {{#each this}}
+            <div class="p-log">
+                <div class="p-log-time">{{date}}</div>
+                <div class="p-log-message">{{message}}</div>
+            </div>
+        {{/each}}
+    {{/with}}
+</template>
