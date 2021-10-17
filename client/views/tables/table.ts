@@ -90,6 +90,8 @@ module MainApp {
             if (nextToActPlayer)
                 self.nextPlayerToActSeatIndex.set(nextToActPlayer.seatIndex);
         });
+
+        document.title = "Pokker! " + this.data.name;
     });
 
     Template.templateTable.helpers({

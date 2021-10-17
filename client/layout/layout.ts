@@ -6,6 +6,10 @@ declare module Template {
 }
 
 module MainApp {
+    Template.templateAppLayout.onCreated(function(): void {
+        document.title = "Pokker!";
+    });
+
     Template.templateAppLayout.helpers({
         thisArray: function(): any[] {
             return [this];
