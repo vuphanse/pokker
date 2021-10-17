@@ -4,6 +4,7 @@ import { checkUserAccess } from "./../security/security";
 
 Meteor.startup(() => DBCollection.TableHands.remove({}));
 
+
 module MainApp {
     const SB = 2;
     const BB = 4;

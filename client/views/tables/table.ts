@@ -118,6 +118,9 @@ module MainApp {
 
             return pot;
         },
+        cardsData: function(): string[] {
+            return ['2s', '3c'];
+        }
     });
 
     function getCurrentHand(tpl: TemplateTableInstance): DB.TableHand {

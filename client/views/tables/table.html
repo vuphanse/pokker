@@ -4,6 +4,10 @@
     {{/with}}
 </template>
 
+<template name="templateDisplayCard">
+    <div class="display-card" style="background: url('/cards/{{this}}.png')"></div>
+</template>
+
 <template name="templateTable">
     {{#with currentHand}}
         <div class="p-handlog">
@@ -29,6 +33,12 @@
             {{/each}}
         </div>
         <div class="p-table-main">
+            {{#with cardsData}}
+                {{#each this}}
+                    {{> templateDisplayCard}}
+                {{/each}}
+            {{/with}}
+            
             {{#if currentHand}}
                 <div class="pot">
                     {{pot}}
