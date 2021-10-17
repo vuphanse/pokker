@@ -11,6 +11,7 @@ Meteor.startup(function(): void {
     // DBCollection.TableHands.remove({});
 });
 
+
 module MainApp {
     const SB = 10;
     const BB = 20;

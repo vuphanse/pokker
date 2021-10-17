@@ -4,6 +4,10 @@
     {{/with}}
 </template>
 
+<template name="templateDisplayCard">
+    <div class="display-card" style="background: url('/cards/{{this}}.png')"></div>
+</template>
+
 <template name="templateTable">
     <div class="play-table">
         <div class="table-section">
@@ -36,7 +40,7 @@
                         </div>
                         <div class="cards">
                             {{#each cards}}
-                                {{this}}
+                                {{> templateDisplayCard}}
                             {{/each}}
                         </div>
                     {{else}}

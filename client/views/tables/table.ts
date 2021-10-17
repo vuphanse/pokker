@@ -299,6 +299,9 @@ module MainApp {
             let hand = getCurrentHand(tpl);
             return getCards(hand);
         },
+        cardsData: function(): string[] {
+            return ['2s', '3c'];
+        }
     });
 
     function addCards(tpl: TemplateTableInstance): void {
